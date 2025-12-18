@@ -2,12 +2,22 @@
 import { toTypedSchema } from "@vee-validate/zod";
 import { InsertLocation } from "~~/lib/db/schema";
 
-const { handleSubmit, errors } = useForm({
+const router = useRouter();
+
+const { handleSubmit, errors, meta } = useForm({
   validationSchema: toTypedSchema(InsertLocation),
 });
 
 const onSubmit = handleSubmit((values) => {
   console.log(values);
+});
+
+onBeforeRouteLeave(() => {
+  if (meta.value.dirty) {
+    // eslint-disable-next-line no-alert
+    return window.confirm("Are you sure you want to leave? All unsaved changes will be lost.");
+  }
+  return true;
 });
 </script>
 
@@ -46,7 +56,11 @@ const onSubmit = handleSubmit((values) => {
         :error="errors.long"
       />
       <div class="flex justify-end gap-2">
-        <button type="button" class="btn btn-outline">
+        <button
+          type="button"
+          class="btn btn-outline"
+          @click="router.back()"
+        >
           <Icon name="tabler:arrow-left" size="24" />
           Cancel
         </button>
