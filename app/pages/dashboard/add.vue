@@ -1,3 +1,16 @@
+<script lang="ts" setup>
+import { toTypedSchema } from "@vee-validate/zod";
+import { InsertLocation } from "~~/lib/db/schema";
+
+const { handleSubmit, errors } = useForm({
+  validationSchema: toTypedSchema(InsertLocation),
+});
+
+const onSubmit = handleSubmit((values) => {
+  console.log(values);
+});
+</script>
+
 <template>
   <div class="container max-w-md mx-auto mt-4">
     <div>
@@ -8,58 +21,30 @@
         A location is a place you have travelled or will travel to. It can be a city, country, state or point of interest. You can add specific times you visited this location after adding it.
       </p>
     </div>
-    <form class="flex flex-col gap-2">
-      <fieldset class="fieldset">
-        <legend class="fieldset-legend">
-          Name
-        </legend>
-        <input
-          name="name"
-          type="text"
-          class="input w-full"
-        >
-        <!-- <p class="label">
-          Optional
-        </p> -->
-      </fieldset>
-      <fieldset class="fieldset">
-        <legend class="fieldset-legend">
-          Description
-        </legend>
-        <textarea
-          name="description"
-          class="textarea h-24 w-full"
-        />
-        <!-- <p class="label">
-          Optional
-        </p> -->
-      </fieldset>
-      <fieldset class="fieldset">
-        <legend class="fieldset-legend">
-          Latitude
-        </legend>
-        <input
-          name="lat"
-          type="number"
-          class="input w-full"
-        >
-        <!-- <p class="label">
-          Optional
-        </p> -->
-      </fieldset>
-      <fieldset class="fieldset">
-        <legend class="fieldset-legend">
-          Longitude
-        </legend>
-        <input
-          name="long"
-          type="number"
-          class="input w-full"
-        >
-        <!-- <p class="label">
-          Optional
-        </p> -->
-      </fieldset>
+    <form class="flex flex-col gap-2" @submit.prevent="onSubmit">
+      <AppFormField
+        label="Name"
+        name="name"
+        :error="errors.name"
+      />
+      <AppFormField
+        label="Description"
+        name="description"
+        type="textarea"
+        :error="errors.description"
+      />
+      <AppFormField
+        label="Latitude"
+        name="lat"
+        type="number"
+        :error="errors.lat"
+      />
+      <AppFormField
+        label="Longitude"
+        name="long"
+        type="number"
+        :error="errors.long"
+      />
       <div class="flex justify-end gap-2">
         <button type="button" class="btn btn-outline">
           <Icon name="tabler:arrow-left" size="24" />
