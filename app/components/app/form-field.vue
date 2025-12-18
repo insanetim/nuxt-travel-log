@@ -4,6 +4,7 @@ const props = defineProps<{
   name: string;
   type?: "text" | "number" | "textarea";
   error?: string;
+  disabled?: boolean;
 }>();
 </script>
 
@@ -22,6 +23,7 @@ const props = defineProps<{
         'input-error': props.error,
       }"
       :as="props.type === 'textarea' ? 'textarea' : 'input'"
+      :disabled="props.disabled"
     />
     <p v-if="props.error" class="label text-error">
       {{ props.error }}
