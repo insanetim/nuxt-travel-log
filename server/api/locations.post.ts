@@ -33,11 +33,11 @@ export default defineEventHandler(async (event) => {
     }));
   }
 
-  db.insert(location).values({
+  const [created] = await db.insert(location).values({
     ...result.data,
     slug: result.data.name.replaceAll(" ", "-").toLowerCase(),
-    userId: 1,
-  });
+    userId: event.context.user.id,
+  }).returning();
 
-  return result.data;
+  return created;
 });
