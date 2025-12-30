@@ -4,6 +4,7 @@ import type { FetchError } from "ofetch";
 import { toTypedSchema } from "@vee-validate/zod";
 import { InsertLocation } from "~~/lib/db/schema";
 
+const { $csrfFetch } = useNuxtApp();
 const router = useRouter();
 const loading = ref(false);
 const submitted = ref(false);
@@ -16,7 +17,7 @@ const onSubmit = handleSubmit(async (values) => {
   try {
     loading.value = true;
     submitError.value = "";
-    await $fetch("/api/locations", {
+    await $csrfFetch("/api/locations", {
       method: "POST",
       body: values,
     });
