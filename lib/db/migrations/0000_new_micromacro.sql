@@ -58,13 +58,14 @@ CREATE TABLE `location` (
 	`description` text,
 	`lat` real NOT NULL,
 	`long` real NOT NULL,
-	`user_id` integer NOT NULL,
+	`user_id` text NOT NULL,
 	`created_at` integer NOT NULL,
 	`updated_at` integer NOT NULL,
 	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `location_slug_unique` ON `location` (`slug`);--> statement-breakpoint
+CREATE UNIQUE INDEX `location_name_userId_unique` ON `location` (`name`,`user_id`);--> statement-breakpoint
 CREATE TABLE `locationLog` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`name` text NOT NULL,
@@ -74,7 +75,7 @@ CREATE TABLE `locationLog` (
 	`lat` real NOT NULL,
 	`long` real NOT NULL,
 	`location_id` integer NOT NULL,
-	`user_id` integer NOT NULL,
+	`user_id` text NOT NULL,
 	`created_at` integer NOT NULL,
 	`updated_at` integer NOT NULL,
 	FOREIGN KEY (`location_id`) REFERENCES `location`(`id`) ON UPDATE no action ON DELETE no action,
@@ -85,7 +86,7 @@ CREATE TABLE `locationLogImage` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`key` text NOT NULL,
 	`location_log_id` integer NOT NULL,
-	`user_id` integer NOT NULL,
+	`user_id` text NOT NULL,
 	`created_at` integer NOT NULL,
 	`updated_at` integer NOT NULL,
 	FOREIGN KEY (`location_log_id`) REFERENCES `locationLog`(`id`) ON UPDATE no action ON DELETE no action,
