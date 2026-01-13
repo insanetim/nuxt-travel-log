@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { LngLatLike } from "maplibre-gl";
 
-const style = "https://demotiles.maplibre.org/style.json";
+const style = "https://tiles.openfreemap.org/styles/liberty";
 const center: LngLatLike = [-1.559482, 47.21322];
 const zoom = 8;
 </script>
