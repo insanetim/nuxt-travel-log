@@ -1,15 +1,15 @@
 <script lang="ts" setup>
-import type { LngLatLike } from "maplibre-gl";
+import { CENTER_DNIPRO } from "~~/lib/constants";
 
-const style = "https://tiles.openfreemap.org/styles/liberty";
-const center: LngLatLike = [-1.559482, 47.21322];
-const zoom = 8;
+const colorMode = useColorMode();
+const style = computed(() => colorMode.value === "dark" ? "styles/dark.json" : "https://tiles.openfreemap.org/styles/liberty");
+const zoom = 3;
 </script>
 
 <template>
   <MglMap
     :map-style="style"
-    :center="center"
+    :center="CENTER_DNIPRO"
     :zoom="zoom"
   >
     <MglNavigationControl />
