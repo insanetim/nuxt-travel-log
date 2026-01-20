@@ -2,6 +2,7 @@ import type { MapPoint } from "~~/lib/types";
 
 export const useMapStore = defineStore("useMapStore", () => {
   const mapPoints = ref<MapPoint[]>([]);
+  const selectedPoint = ref<MapPoint | null>(null);
 
   async function init() {
     const { useMap } = await import("@indoorequal/vue-maplibre-gl");
@@ -26,5 +27,6 @@ export const useMapStore = defineStore("useMapStore", () => {
   return {
     init,
     mapPoints,
+    selectedPoint,
   };
 });

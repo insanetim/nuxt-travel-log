@@ -5,6 +5,6 @@ type LatLongItem = {
 
 export type MapPoint = {
   id: number;
-  label: string;
+  name: string;
   description: string | null;
 } & LatLongItem;
