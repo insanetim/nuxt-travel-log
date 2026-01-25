@@ -4,6 +4,7 @@ const props = defineProps<{
   icon: string;
   href: string;
   showLabel: boolean;
+  iconColor?: "text-accent" | "text-primary" | "text-secondary";
 }>();
 
 const route = useRoute();
@@ -24,6 +25,7 @@ const route = useRoute();
         :name="props.icon"
         size="24"
         class="flex-none"
+        :class="props.iconColor"
       />
       <Transition name="grow">
         <span v-if="props.showLabel" class="whitespace-nowrap">
