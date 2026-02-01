@@ -17,9 +17,10 @@ onMounted(() => {
       <span class="loading loading-spinner loading-xl" />
     </div>
     <div v-else-if="locations && locations.length" class="flex mt-4 gap-2 overflow-auto">
-      <div
+      <NuxtLink
         v-for="location in locations"
         :key="location.id"
+        :to="{ name: 'dashboard-location-slug', params: { slug: location.slug } }"
         class="card bg-base-300 h-40 w-72 mb-2 border-2 shrink-0 hover:cursor-pointer"
         :class="{
           'border-accent': location.id === mapStore.selectedPoint?.id,
@@ -34,7 +35,7 @@ onMounted(() => {
           </h3>
           <p>{{ location.description }}</p>
         </div>
-      </div>
+      </NuxtLink>
     </div>
     <div v-else class="flex flex-col gap-2 mt-4">
       <p>Add a location to get started</p>
