@@ -84,7 +84,11 @@ onMounted(() => {
 onBeforeRouteLeave(() => {
   if (!submitted.value && meta.value.dirty) {
     // eslint-disable-next-line no-alert
-    return window.confirm("Are you sure you want to leave? All unsaved changes will be lost.");
+    const confirmed = window.confirm("Are you sure you want to leave? All unsaved changes will be lost.");
+    if (confirmed) {
+      mapStore.addedPoint = null;
+    }
+    return confirmed;
   }
   mapStore.addedPoint = null;
   return true;
