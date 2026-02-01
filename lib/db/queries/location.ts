@@ -8,6 +8,15 @@ import { location } from "../schema";
 
 const nanoid = customAlphabet("1234567890abcdefghijklmnopqrstuvwxyz", 5);
 
+export async function findLocation(slug: string, userId: string) {
+  return db.query.location.findFirst({
+    where: and(
+      eq(location.slug, slug),
+      eq(location.userId, userId),
+    ),
+  });
+}
+
 export async function findLocations(userId: string) {
   return db.query.location.findMany({
     where: eq(location.userId, userId),
