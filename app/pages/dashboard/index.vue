@@ -23,10 +23,10 @@ onMounted(() => {
         :to="{ name: 'dashboard-location-slug', params: { slug: location.slug } }"
         class="card bg-base-300 h-40 w-72 mb-2 border-2 shrink-0 hover:cursor-pointer"
         :class="{
-          'border-accent': location.id === mapStore.selectedPoint?.id,
-          'border-transparent': location.id !== mapStore.selectedPoint?.id,
+          'border-accent': isPointSelected(location, mapStore.selectedPoint),
+          'border-transparent': !isPointSelected(location, mapStore.selectedPoint),
         }"
-        @mouseenter="mapStore.selectedPoint = location"
+        @mouseenter="mapStore.selectedPoint = createMapPointFromLocation(location)"
         @mouseleave="mapStore.selectedPoint = null"
       >
         <div class="card-body">

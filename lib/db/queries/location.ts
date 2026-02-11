@@ -14,6 +14,9 @@ export async function findLocation(slug: string, userId: string) {
       eq(location.slug, slug),
       eq(location.userId, userId),
     ),
+    with: {
+      locationLogs: true,
+    },
   });
 }
 

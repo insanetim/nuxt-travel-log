@@ -25,7 +25,10 @@ export const useMapStore = defineStore("useMapStore", () => {
         return bounds.extend([point.long, point.lat]);
       }, new LngLatBounds([firstPoint.long, firstPoint.lat], [firstPoint.long, firstPoint.lat]));
 
-      map.map?.fitBounds(bounds, { padding });
+      map.map?.fitBounds(bounds, {
+        padding,
+        maxZoom: 6,
+      });
     });
 
     watch(addedPoint, (newValue, oldValue) => {
