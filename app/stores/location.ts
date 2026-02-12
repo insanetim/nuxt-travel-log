@@ -1,7 +1,11 @@
 import type { SelectLocationWithLogs } from "~~/lib/db/schema";
 import type { MapPoint } from "~~/lib/types";
 
+const listLocationsInSidebar = new Set(["dashboard", "dashboard-add"]);
+const listCurrentLocationInSidebar = new Set(["dashboard-location-slug", "dashboard-location-slug-edit", "dashboard-location-slug-add"]);
+
 export const useLocationStore = defineStore("useLocationStore", () => {
+  const route = useRoute();
   const {
     data: locations,
     status: locationsStatus,
@@ -42,7 +46,7 @@ export const useLocationStore = defineStore("useLocationStore", () => {
   const mapStore = useMapStore();
 
   effect(() => {
-    if (locations.value) {
+    if (locations.value && listLocationsInSidebar.has(route.name?.toString() || "")) {
       const mapPoints: MapPoint[] = [];
       const sidebarItems: SidebarItem[] = [];
 
@@ -60,6 +64,10 @@ export const useLocationStore = defineStore("useLocationStore", () => {
 
       sidebarStore.sidebarItems = sidebarItems;
       mapStore.mapPoints = mapPoints;
+    }
+    else if (currentLocation.value && listCurrentLocationInSidebar.has(route.name?.toString() || "")) {
+      sidebarStore.sidebarItems = [];
+      mapStore.mapPoints = [currentLocation.value];
     }
     sidebarStore.loading = locationsStatus.value === "pending";
   });
