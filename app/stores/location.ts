@@ -13,33 +13,17 @@ export const useLocationStore = defineStore("useLocationStore", () => {
     lazy: true,
   });
 
-  const currentLocation = ref<SelectLocationWithLogs | null>(null);
-  const currentLocationStatus = ref<"idle" | "pending" | "success" | "error">("idle");
-  const currentLocationError = ref<any>(null);
+  const locationUrlWithSlug = computed(() => `/api/locations/${route.params.slug}`);
 
-  const refreshCurrentLocation = async () => {
-    const route = useRoute();
-
-    if (!route.params.slug) {
-      currentLocation.value = null;
-      currentLocationStatus.value = "idle";
-      currentLocationError.value = null;
-      return;
-    }
-
-    currentLocationStatus.value = "pending";
-    currentLocationError.value = null;
-
-    try {
-      const data = await $fetch<SelectLocationWithLogs>(`/api/locations/${route.params.slug}`);
-      currentLocation.value = data;
-      currentLocationStatus.value = "success";
-    }
-    catch (error) {
-      currentLocationError.value = error;
-      currentLocationStatus.value = "error";
-    }
-  };
+  const {
+    data: currentLocation,
+    status: currentLocationStatus,
+    error: currentLocationError,
+    refresh: refreshCurrentLocation,
+  } = useFetch<SelectLocationWithLogs>(locationUrlWithSlug, {
+    lazy: true,
+    immediate: false,
+  });
 
   const sidebarStore = useSidebarStore();
   const mapStore = useMapStore();
