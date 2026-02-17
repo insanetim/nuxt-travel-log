@@ -1,8 +1,7 @@
 import type { SelectLocationWithLogs } from "~~/lib/db/schema";
 import type { MapPoint } from "~~/lib/types";
 
-const listLocationsInSidebar = new Set(["dashboard", "dashboard-add"]);
-const listCurrentLocationInSidebar = new Set(["dashboard-location-slug", "dashboard-location-slug-edit", "dashboard-location-slug-add"]);
+import { CURRENT_LOCATION_PAGES, LOCATION_PAGES } from "~~/lib/constants";
 
 export const useLocationStore = defineStore("useLocationStore", () => {
   const route = useRoute();
@@ -14,39 +13,23 @@ export const useLocationStore = defineStore("useLocationStore", () => {
     lazy: true,
   });
 
-  const currentLocation = ref<SelectLocationWithLogs | null>(null);
-  const currentLocationStatus = ref<"idle" | "pending" | "success" | "error">("idle");
-  const currentLocationError = ref<any>(null);
+  const locationUrlWithSlug = computed(() => `/api/locations/${route.params.slug}`);
 
-  const refreshCurrentLocation = async () => {
-    const route = useRoute();
-
-    if (!route.params.slug) {
-      currentLocation.value = null;
-      currentLocationStatus.value = "idle";
-      currentLocationError.value = null;
-      return;
-    }
-
-    currentLocationStatus.value = "pending";
-    currentLocationError.value = null;
-
-    try {
-      const data = await $fetch<SelectLocationWithLogs>(`/api/locations/${route.params.slug}`);
-      currentLocation.value = data;
-      currentLocationStatus.value = "success";
-    }
-    catch (error) {
-      currentLocationError.value = error;
-      currentLocationStatus.value = "error";
-    }
-  };
+  const {
+    data: currentLocation,
+    status: currentLocationStatus,
+    error: currentLocationError,
+    refresh: refreshCurrentLocation,
+  } = useFetch<SelectLocationWithLogs>(locationUrlWithSlug, {
+    lazy: true,
+    immediate: false,
+  });
 
   const sidebarStore = useSidebarStore();
   const mapStore = useMapStore();
 
   effect(() => {
-    if (locations.value && listLocationsInSidebar.has(route.name?.toString() || "")) {
+    if (locations.value && LOCATION_PAGES.has(route.name?.toString() || "")) {
       const mapPoints: MapPoint[] = [];
       const sidebarItems: SidebarItem[] = [];
 
@@ -65,7 +48,7 @@ export const useLocationStore = defineStore("useLocationStore", () => {
       sidebarStore.sidebarItems = sidebarItems;
       mapStore.mapPoints = mapPoints;
     }
-    else if (currentLocation.value && listCurrentLocationInSidebar.has(route.name?.toString() || "")) {
+    else if (currentLocation.value && CURRENT_LOCATION_PAGES.has(route.name?.toString() || "")) {
       sidebarStore.sidebarItems = [];
       mapStore.mapPoints = [currentLocation.value];
     }
