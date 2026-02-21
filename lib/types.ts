@@ -1,6 +1,6 @@
 import type { RouteLocationRaw } from "vue-router";
 
-type LatLongItem = {
+export type LatLongItem = {
   lat: number;
   long: number;
 };

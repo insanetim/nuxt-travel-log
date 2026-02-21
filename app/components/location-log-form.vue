@@ -1,28 +1,29 @@
 <script lang="ts" setup>
 import { CENTER_USA } from "~~/lib/constants";
-import { InsertLocation } from "~~/lib/db/schema";
+import { InsertLocationLog } from "~~/lib/db/schema";
 
 const props = defineProps<{
-  initialValues?: InsertLocation;
-  onSubmit: (location: InsertLocation) => Promise<any>;
+  initialValues?: InsertLocationLog;
+  onSubmit: (location: InsertLocationLog) => Promise<any>;
   onSubmitComplete: () => void;
   submitLabel: string;
   submitIcon: string;
-  zoom?: number;
 }>();
 </script>
 
 <template>
   <LocationBaseForm
     v-slot="{ errors, loading }"
-    :schema="InsertLocation"
+    :schema="InsertLocationLog"
     :initial-values="props.initialValues || {
       name: '',
       description: '',
+      startedAt: Date.now() - 24 * 60 * 60 * 1000,
+      endedAt: Date.now(),
       long: (CENTER_USA as [number, number])[0],
       lat: (CENTER_USA as [number, number])[1],
     }"
-    :zoom="props.zoom || 6"
+    :zoom="11"
     :on-submit
     :on-submit-complete
     :submit-label
@@ -39,6 +40,18 @@ const props = defineProps<{
       label="Description"
       type="textarea"
       :error="errors.description"
+      :disabled="loading"
+    />
+    <AppFormField
+      name="startedAt"
+      label="Started At"
+      :error="errors.startedAt"
+      :disabled="loading"
+    />
+    <AppFormField
+      name="endedAt"
+      label="Ended At"
+      :error="errors.endedAt"
       :disabled="loading"
     />
   </LocationBaseForm>
