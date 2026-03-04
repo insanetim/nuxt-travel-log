@@ -111,7 +111,7 @@ onBeforeRouteUpdate((to) => {
       <LocationCard
         v-for="log in location.locationLogs"
         :key="log.id"
-        :map-point="createMapPointFromLocationLog(log)"
+        :map-point="createMapPointFromLocationLog({ location, locationLog: log })"
       >
         <template #top>
           <p class="text-sm italic text-gray-500">

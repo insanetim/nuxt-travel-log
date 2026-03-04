@@ -1,4 +1,4 @@
-import type { SelectLocationWithLogs } from "~~/lib/db/schema";
+import type { SelectLocation, SelectLocationWithLogs } from "~~/lib/db/schema";
 import type { MapPoint } from "~~/lib/types";
 
 import { CURRENT_LOCATION_PAGES, LOCATION_PAGES } from "~~/lib/constants";
@@ -49,8 +49,26 @@ export const useLocationStore = defineStore("useLocationStore", () => {
       mapStore.mapPoints = mapPoints;
     }
     else if (currentLocation.value && CURRENT_LOCATION_PAGES.has(route.name?.toString() || "")) {
-      sidebarStore.sidebarItems = [];
-      mapStore.mapPoints = [currentLocation.value];
+      const mapPoints: MapPoint[] = [];
+      const sidebarItems: SidebarItem[] = [];
+
+      currentLocation.value.locationLogs.forEach((log) => {
+        const mapPoint = createMapPointFromLocationLog({
+          location: currentLocation.value as SelectLocation,
+          locationLog: log,
+        });
+        sidebarItems.push({
+          id: `location-log-${log.id}`,
+          label: log.name,
+          icon: "tabler:map-pin-filled",
+          to: { name: "dashboard-location-slug-id", params: { slug: currentLocation.value?.slug, id: log.id } },
+          mapPoint,
+        });
+        mapPoints.push(mapPoint);
+      });
+
+      sidebarStore.sidebarItems = sidebarItems;
+      mapStore.mapPoints = mapPoints;
     }
     sidebarStore.loading = locationsStatus.value === "pending";
   });
