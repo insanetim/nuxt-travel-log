@@ -12,15 +12,6 @@ const { handleBlur, value: inputValue, handleChange } = useField<number>(props.n
   initialValue: props.value,
 });
 
-function formatDate(value: number | string) {
-  const date = new Date(value);
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  const formatted = `${year}-${month}-${day}`;
-  return formatted;
-}
-
 function dateChanged(event: Event) {
   const target = event.target as HTMLInputElement;
   handleChange(new Date(target.value).getTime());
