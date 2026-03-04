@@ -4,7 +4,7 @@ import type { LngLatBounds } from "maplibre-gl";
 export const useMapStore = defineStore("useMapStore", () => {
   const mapPoints = ref<MapPoint[]>([]);
   const selectedPoint = ref<MapPoint | null>(null);
-  const addedPoint = ref<MapPoint & { centerMap?: boolean } | null>(null);
+  const addedPoint = ref<MapPoint & { centerMap?: boolean; zoom?: number } | null>(null);
 
   async function init() {
     const { useMap } = await import("@indoorequal/vue-maplibre-gl");
@@ -33,10 +33,14 @@ export const useMapStore = defineStore("useMapStore", () => {
 
     watch(addedPoint, (newValue, oldValue) => {
       if ((newValue && !oldValue) || newValue?.centerMap) {
-        map.map?.flyTo({
-          center: [newValue.long, newValue.lat],
-          speed: 0.8,
-          zoom: 6,
+        window.requestAnimationFrame(() => {
+          window.requestAnimationFrame(() => {
+            map.map?.flyTo({
+              center: [newValue.long, newValue.lat],
+              speed: 0.8,
+              zoom: newValue.zoom || 6,
+            });
+          });
         });
       }
     }, { immediate: true });
