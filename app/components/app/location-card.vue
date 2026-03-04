@@ -20,6 +20,7 @@ const mapStore = useMapStore();
     @mouseleave="mapStore.selectedPoint = null"
   >
     <div class="card-body">
+      <slot name="top" />
       <h3 class="text-xl">
         {{ mapPoint.name }}
       </h3>

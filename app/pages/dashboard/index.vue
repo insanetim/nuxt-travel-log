@@ -10,14 +10,14 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="p-4 min-h-64">
+  <div class="page-content-top">
     <h2 class="text-2xl">
       Locations
     </h2>
     <div v-if="status === 'pending'">
       <span class="loading loading-spinner loading-xl" />
     </div>
-    <div v-else-if="locations && locations.length" class="flex mt-4 gap-2 overflow-auto">
+    <div v-else-if="locations && locations.length > 0" class="location-list">
       <LocationCard
         v-for="location in locations"
         :key="location.id"
