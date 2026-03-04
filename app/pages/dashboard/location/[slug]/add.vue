@@ -5,9 +5,13 @@ import { CENTER_USA } from "~~/lib/constants";
 
 const route = useRoute();
 const { currentLocation } = useLocationStore();
+const { $csrfFetch } = useNuxtApp();
 
 async function onSubmit(values: InsertLocationLog) {
-  console.log(values);
+  await $csrfFetch(`/api/locations/${route.params.slug}/add`, {
+    method: "post",
+    body: values,
+  });
 }
 
 function onSubmitComplete() {
