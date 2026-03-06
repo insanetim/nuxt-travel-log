@@ -36,7 +36,7 @@ effect(() => {
         icon: "tabler:map",
       },
       {
-        id: "link-location-add",
+        id: "link-add-location",
         label: "Add Location",
         href: "/dashboard/add",
         icon: "tabler:circle-plus-filled",
@@ -65,7 +65,7 @@ effect(() => {
         },
         icon: "tabler:map",
       }, {
-        id: "link-location-edit",
+        id: "link-edit-location",
         label: "Edit Location",
         to: {
           name: "dashboard-location-slug-edit",
@@ -75,7 +75,7 @@ effect(() => {
         },
         icon: "tabler:map-pin-cog",
       }, {
-        id: "link-location-log-add",
+        id: "link-add-location-log",
         label: "Add Location Log",
         to: {
           name: "dashboard-location-slug-add",
@@ -99,6 +99,28 @@ effect(() => {
           },
         },
         icon: "tabler:arrow-left",
+      }, {
+        id: "link-view-location-log",
+        label: "View Log",
+        to: {
+          name: "dashboard-location-slug-id",
+          params: {
+            slug: route.params.slug,
+            id: route.params.id,
+          },
+        },
+        icon: "tabler:map-pin",
+      }, {
+        id: "link-edit-location-log",
+        label: "Edit Log",
+        to: {
+          name: "dashboard-location-slug-id-edit",
+          params: {
+            slug: route.params.slug,
+            id: route.params.id,
+          },
+        },
+        icon: "tabler:map-pin-cog",
       }];
     }
   }
