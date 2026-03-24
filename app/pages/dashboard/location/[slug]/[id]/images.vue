@@ -14,6 +14,35 @@ function selectImage(event: Event) {
     previewUrl.value = URL.createObjectURL(file);
   }
 }
+
+async function getChecksum(blob: Blob) {
+  const arrayBuffer = await blob.arrayBuffer();
+  const hashBuffer = await crypto.subtle.digest("sha-256", arrayBuffer);
+  return btoa(String.fromCharCode(...new Uint8Array(hashBuffer)));
+}
+
+async function uploadImage() {
+  if (!image.value || !previewUrl.value)
+    return;
+
+  const previewImage = new Image();
+  previewImage.addEventListener("load", async () => {
+    const width = Math.min(previewImage.width, 1000);
+    const resized = await createImageBitmap(previewImage, {
+      resizeWidth: width,
+    });
+    const canvas = new OffscreenCanvas(width, resized.height);
+    canvas.getContext("bitmaprenderer")?.transferFromImageBitmap(resized);
+    const blob = await canvas.convertToBlob({
+      type: "image/jpeg",
+      quality: 0.9,
+    });
+
+    const checksum = await getChecksum(blob);
+    console.log(checksum);
+  });
+  previewImage.src = previewUrl.value;
+}
 </script>
 
 <template>
@@ -38,7 +67,11 @@ function selectImage(event: Event) {
         class="file-input"
         @change="selectImage"
       >
-      <button class="btn btn-primary" :disabled="!image">
+      <button
+        class="btn btn-primary"
+        :disabled="!image"
+        @click="uploadImage"
+      >
         Upload
       </button>
     </div>
