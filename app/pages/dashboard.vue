@@ -36,7 +36,7 @@ effect(() => {
         icon: "tabler:map",
       },
       {
-        id: "link-add-location",
+        id: "link-location-add",
         label: "Add Location",
         href: "/dashboard/add",
         icon: "tabler:circle-plus-filled",
@@ -65,7 +65,7 @@ effect(() => {
         },
         icon: "tabler:map",
       }, {
-        id: "link-edit-location",
+        id: "link-location-edit",
         label: "Edit Location",
         to: {
           name: "dashboard-location-slug-edit",
@@ -75,7 +75,7 @@ effect(() => {
         },
         icon: "tabler:map-pin-cog",
       }, {
-        id: "link-add-location-log",
+        id: "link-location-log-add",
         label: "Add Location Log",
         to: {
           name: "dashboard-location-slug-add",
@@ -100,7 +100,7 @@ effect(() => {
         },
         icon: "tabler:arrow-left",
       }, {
-        id: "link-view-location-log",
+        id: "link-location-log-view",
         label: "View Log",
         to: {
           name: "dashboard-location-slug-id",
@@ -111,7 +111,7 @@ effect(() => {
         },
         icon: "tabler:map-pin",
       }, {
-        id: "link-edit-location-log",
+        id: "link-location-log-edit",
         label: "Edit Log",
         to: {
           name: "dashboard-location-slug-id-edit",
@@ -121,6 +121,17 @@ effect(() => {
           },
         },
         icon: "tabler:map-pin-cog",
+      }, {
+        id: "link-location-log-images",
+        label: "Manage Images",
+        to: {
+          name: "dashboard-location-slug-id-images",
+          params: {
+            slug: route.params.slug,
+            id: route.params.id,
+          },
+        },
+        icon: "tabler:photo-cog",
       }];
     }
   }
