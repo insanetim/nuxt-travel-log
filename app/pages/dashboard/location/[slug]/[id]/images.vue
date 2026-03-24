@@ -1,11 +1,17 @@
 <script lang="ts" setup>
+import { FetchError } from "ofetch";
+
+const route = useRoute();
 const locationStore = useLocationStore();
 const {
   currentLocationLog: locationLog,
 } = storeToRefs(locationStore);
+const { $csrfFetch } = useNuxtApp();
 
 const image = ref<File | null>(null);
 const previewUrl = ref<string | null>(null);
+const loading = ref(false);
+const errorMessage = ref("");
 
 function selectImage(event: Event) {
   const file = (event.target as HTMLInputElement).files?.[0];
@@ -22,9 +28,12 @@ async function getChecksum(blob: Blob) {
 }
 
 async function uploadImage() {
-  if (!image.value || !previewUrl.value)
+  if (!image.value || !previewUrl.value) {
     return;
+  }
 
+  loading.value = true;
+  errorMessage.value = "";
   const previewImage = new Image();
   previewImage.addEventListener("load", async () => {
     const width = Math.min(previewImage.width, 1000);
@@ -39,7 +48,46 @@ async function uploadImage() {
     });
 
     const checksum = await getChecksum(blob);
-    console.log(checksum);
+
+    try {
+      const { fields, key, url } = await $csrfFetch(`/api/locations/${route.params.slug}/${route.params.id}/sign-image`, {
+        method: "POST",
+        body: {
+          contentLength: blob.size,
+          checksum,
+        },
+      });
+
+      const formData = new FormData();
+      Object.entries(fields).forEach(([name, value]) => {
+        formData.append(name, value as string);
+      });
+      formData.append("file", blob);
+
+      $fetch(url, {
+        method: "POST",
+        body: formData,
+        headers: {
+          "x-amz-checksum-algorithm": "SHA256",
+        },
+      });
+
+      console.log(`${url}/${key}`);
+    }
+    catch (e) {
+      if (e instanceof FetchError) {
+        errorMessage.value = e.statusMessage || "Unknown Error";
+      }
+      else if (e instanceof Error) {
+        errorMessage.value = e.message;
+      }
+      else {
+        errorMessage.value = "Unknown Error";
+      }
+    }
+    finally {
+      loading.value = false;
+    }
   });
   previewImage.src = previewUrl.value;
 }
@@ -51,7 +99,7 @@ async function uploadImage() {
       Manage "{{ locationLog?.name }}" Images
     </h2>
     <div class="flex gap-2 flex-col w-72">
-      <div class="flex justify-center items-center bg-gray-500 h-28 w-full p-1">
+      <div class="flex justify-center items-center relative bg-gray-500 h-28 w-full p-1">
         <p v-if="!previewUrl" class="text-center text-white">
           Select an image
         </p>
@@ -61,15 +109,23 @@ async function uploadImage() {
           class="w-full h-full object-cover"
           alt="upload preview"
         >
+        <div v-if="loading || errorMessage" class="size-full absolute flex justify-center items-center bg-black opacity-50">
+          <div v-if="loading" class="loading loading-lg" />
+          <div v-if="errorMessage" class="text-error">
+            {{ errorMessage }}
+          </div>
+        </div>
       </div>
       <input
         type="file"
         class="file-input"
+        accept="image/*"
+        :disabled="loading"
         @change="selectImage"
       >
       <button
         class="btn btn-primary"
-        :disabled="!image"
+        :disabled="!image || loading"
         @click="uploadImage"
       >
         Upload

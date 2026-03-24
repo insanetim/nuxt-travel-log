@@ -25,6 +25,7 @@ export default defineAuthenticatedEventHandler(async (event) => {
   const client = new S3Client({
     region: env.S3_REGION,
     endpoint: env.S3_ENDPOINT,
+    forcePathStyle: env.S3_ENDPOINT.includes("localhost"),
     credentials: {
       accessKeyId: env.S3_ACCESS_KEY,
       secretAccessKey: env.S3_SECRET_KEY,
