@@ -12,6 +12,7 @@ const image = ref<File | null>(null);
 const previewUrl = ref<string | null>(null);
 const loading = ref(false);
 const errorMessage = ref("");
+const imageInput = useTemplateRef("imageInput");
 
 function selectImage(event: Event) {
   const file = (event.target as HTMLInputElement).files?.[0];
@@ -75,14 +76,19 @@ async function uploadImage() {
         },
       });
 
-      const result = await $csrfFetch(`/api/locations/${route.params.slug}/${route.params.id}/image`, {
+      await $csrfFetch(`/api/locations/${route.params.slug}/${route.params.id}/image`, {
         method: "POST",
         body: {
           key,
         },
       });
 
-      console.log(result);
+      await locationStore.refreshCurrentLocationLog();
+      image.value = null;
+      previewUrl.value = null;
+      if (imageInput.value) {
+        imageInput.value.value = "";
+      }
     }
     catch (e) {
       if (e instanceof FetchError) {
@@ -108,39 +114,43 @@ async function uploadImage() {
     <h2 class="mb-2">
       Manage "{{ locationLog?.name }}" Images
     </h2>
-    <div class="flex gap-2 flex-col w-72">
-      <div class="flex justify-center items-center relative bg-gray-500 h-28 w-full p-1">
-        <p v-if="!previewUrl" class="text-center text-white">
-          Select an image
-        </p>
-        <img
-          v-else
-          :src="previewUrl"
-          class="w-full h-full object-cover"
-          alt="upload preview"
-        >
-        <div v-if="loading || errorMessage" class="size-full absolute flex justify-center items-center bg-black opacity-50">
-          <div v-if="loading" class="loading loading-lg" />
-          <div v-if="errorMessage" class="text-error">
-            {{ errorMessage }}
+    <div class="flex">
+      <div class="flex gap-2 flex-col w-72">
+        <div class="flex justify-center items-center relative bg-gray-500 h-28 w-full p-1">
+          <p v-if="!previewUrl" class="text-center text-white">
+            Select an image
+          </p>
+          <img
+            v-else
+            :src="previewUrl"
+            class="w-full h-full object-cover"
+            alt="upload preview"
+          >
+          <div v-if="loading || errorMessage" class="size-full absolute flex justify-center items-center bg-black opacity-50">
+            <div v-if="loading" class="loading loading-lg" />
+            <div v-if="errorMessage" class="text-error">
+              {{ errorMessage }}
+            </div>
           </div>
         </div>
+        <input
+          ref="imageInput"
+          type="file"
+          class="file-input"
+          accept="image/*"
+          :disabled="loading"
+          @change="selectImage"
+        >
+        <button
+          class="btn btn-primary"
+          :disabled="!image || loading"
+          @click="uploadImage"
+        >
+          Upload
+          <Icon name="tabler:photo-share" size="24" />
+        </button>
       </div>
-      <input
-        type="file"
-        class="file-input"
-        accept="image/*"
-        :disabled="loading"
-        @change="selectImage"
-      >
-      <button
-        class="btn btn-primary"
-        :disabled="!image || loading"
-        @click="uploadImage"
-      >
-        Upload
-        <Icon name="tabler:photo-share" size="24" />
-      </button>
+      <ImageList class="ml-2" :images="locationLog?.images || []" />
     </div>
   </div>
 </template>
