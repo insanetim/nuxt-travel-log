@@ -7,7 +7,7 @@ const { $csrfFetch } = useNuxtApp();
 
 async function onSubmit(values: InsertLocation) {
   await $csrfFetch(`/api/locations/${route.params.slug}`, {
-    method: "put",
+    method: "PUT",
     body: values,
   });
 }
