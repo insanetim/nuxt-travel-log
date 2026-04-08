@@ -24,7 +24,10 @@ function selectImage(event: Event) {
 async function getChecksum(blob: Blob) {
   const arrayBuffer = await blob.arrayBuffer();
   const hashBuffer = await crypto.subtle.digest("sha-256", arrayBuffer);
-  return btoa(String.fromCharCode(...new Uint8Array(hashBuffer)));
+  const bytes = new Uint8Array(hashBuffer);
+  let binary = "";
+  bytes.forEach(b => binary += String.fromCharCode(b));
+  return btoa(binary);
 }
 
 async function uploadImage() {
@@ -72,7 +75,14 @@ async function uploadImage() {
         },
       });
 
-      console.log(`${url}/${key}`);
+      const result = await $csrfFetch(`/api/locations/${route.params.slug}/${route.params.id}/image`, {
+        method: "POST",
+        body: {
+          key,
+        },
+      });
+
+      console.log(result);
     }
     catch (e) {
       if (e instanceof FetchError) {
@@ -129,6 +139,7 @@ async function uploadImage() {
         @click="uploadImage"
       >
         Upload
+        <Icon name="tabler:photo-share" size="24" />
       </button>
     </div>
   </div>

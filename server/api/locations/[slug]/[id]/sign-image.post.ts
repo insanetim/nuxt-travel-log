@@ -1,6 +1,6 @@
-import { S3Client } from "@aws-sdk/client-s3";
 import { createPresignedPost } from "@aws-sdk/s3-presigned-post";
 import env from "~~/lib/env";
+import createS3Client from "~~/server/utils/create-s3-client";
 import { z } from "zod";
 
 const MAX_CONTENT_LENGTH = 1024 * 1024 * 0.5;
@@ -22,15 +22,7 @@ export default defineAuthenticatedEventHandler(async (event) => {
 
   await event.$fetch(`/api/locations/${slug}/${id}`);
 
-  const client = new S3Client({
-    region: env.S3_REGION,
-    endpoint: env.S3_ENDPOINT,
-    forcePathStyle: env.S3_ENDPOINT.includes("localhost"),
-    credentials: {
-      accessKeyId: env.S3_ACCESS_KEY,
-      secretAccessKey: env.S3_SECRET_KEY,
-    },
-  });
+  const client = createS3Client();
 
   const fileName = crypto.randomUUID();
   const key = `${event.context.user.id}/${id}/${fileName}.jpg`;
